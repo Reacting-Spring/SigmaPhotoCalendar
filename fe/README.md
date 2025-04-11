@@ -1,2 +1,2 @@
 # SigmaPhotoCalendar
-Calendar with Photo
+SigmaPhotoCalendar
