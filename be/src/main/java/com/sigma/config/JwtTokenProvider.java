@@ -1,15 +1,22 @@
 package com.sigma.config;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
 import java.util.Date;
+
 import javax.crypto.SecretKey;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
+import com.sigma.db.repository.UserRepository;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+
 @Component
+@RequiredArgsConstructor
 public class JwtTokenProvider {
 
     @Value("${jwt.secret}")
@@ -22,6 +29,8 @@ public class JwtTokenProvider {
     private long refreshTokenExpirationMillis;
 
     private SecretKey key;
+
+    private final UserRepository userRepository;
 
     @PostConstruct
     public void init() {
@@ -60,6 +69,19 @@ public class JwtTokenProvider {
         }
     }
 
+    public boolean validateRefreshToken(String token) {
+        try {
+            Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token);
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     public Long getIdFromToken(String token) {
         return Jwts.parser()
             .verifyWith(key)
@@ -79,9 +101,9 @@ public class JwtTokenProvider {
             .build();
     }
 
-    public ResponseCookie deleteRefreshTokenCookie() {
+    public ResponseCookie deleteRefreshTokenCookie(String refreshToken) {
 
-        return ResponseCookie.from("refresh_token", "")
+        return ResponseCookie.from("refresh_token", refreshToken)
             .httpOnly(true)
             .secure(true)
             .sameSite("Strict") // CSRF 방지

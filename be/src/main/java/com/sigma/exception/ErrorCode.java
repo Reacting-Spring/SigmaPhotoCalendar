@@ -11,7 +11,8 @@ public enum ErrorCode {
     INVALID_REFRESH_TOKEN("Invalid refresh token", HttpStatus.BAD_REQUEST),
     FILE_UPLOAD_FAIL("File upload failed", HttpStatus.INTERNAL_SERVER_ERROR),
     FILE_NOT_FOUND("File not found", HttpStatus.NOT_FOUND),
-    FILE_READ_FAIL("File read failed", HttpStatus.INTERNAL_SERVER_ERROR);
+    FILE_READ_FAIL("File read failed", HttpStatus.INTERNAL_SERVER_ERROR),
+    FILE_DELETE_FAIL("File delete failed", HttpStatus.INTERNAL_SERVER_ERROR);
 
     private final String message;
     private final HttpStatus status;

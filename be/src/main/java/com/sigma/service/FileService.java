@@ -10,6 +10,5 @@ public interface FileService {
 
     List<String> getImagePathsByDate(Long userId, LocalDate date);
 
-    byte[] loadImageByFilename(String filename);
-
+	void deleteImages(Long userId, List<String> filenames);
 }

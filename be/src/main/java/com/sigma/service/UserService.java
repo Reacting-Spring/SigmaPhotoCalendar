@@ -12,7 +12,7 @@ public interface UserService {
 
     AuthResponse login(@Valid AuthRequest request);
 
-    ResponseCookie logout();
+    ResponseCookie logout(String refreshToken);
 
     String reissueAccessToken(String refreshToken);
 }

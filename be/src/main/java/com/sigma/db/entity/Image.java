@@ -32,6 +32,8 @@ public class Image {
 
     private String filename;
 
+    private String folderPath;
+
     private LocalDate createdAt;
 
 }

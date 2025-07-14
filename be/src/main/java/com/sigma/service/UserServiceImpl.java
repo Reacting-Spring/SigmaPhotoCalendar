@@ -1,8 +1,12 @@
 package com.sigma.service;
 
+import java.time.LocalDateTime;
+
 import com.sigma.config.CustomUserDetails;
 import com.sigma.config.JwtTokenProvider;
+import com.sigma.db.entity.RefreshToken;
 import com.sigma.db.entity.User;
+import com.sigma.db.repository.RefreshTokenRepository;
 import com.sigma.db.repository.UserRepository;
 import com.sigma.exception.CustomException;
 import com.sigma.exception.ErrorCode;
@@ -25,6 +29,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     @Transactional
@@ -41,6 +46,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
     @Override
+    @Transactional
     public AuthResponse login(AuthRequest request) {
         User user = userRepository.findByUserId(request.getUserId())
             .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -52,22 +58,39 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         String accessToken = jwtTokenProvider.generateAccessToken(user.getId());
         String refreshToken = jwtTokenProvider.generateRefreshToken(user.getId());
 
+        refreshTokenRepository.deleteByUserId(user.getId());
+        refreshTokenRepository.save(
+        RefreshToken.builder()
+            .user(user)
+            .token(refreshToken)
+            .build()
+        );
+
         ResponseCookie cookie = jwtTokenProvider.createRefreshTokenCookie(refreshToken);
         return new AuthResponse(accessToken, cookie);
     }
 
     @Override
-    public ResponseCookie logout() {
-        return jwtTokenProvider.deleteRefreshTokenCookie();
+    @Transactional
+    public ResponseCookie logout(String refreshToken) {
+        refreshTokenRepository.deleteByToken(refreshToken);
+        return jwtTokenProvider.deleteRefreshTokenCookie(refreshToken);
     }
 
     @Override
     public String reissueAccessToken(String refreshToken) {
-        if (refreshToken == null || !jwtTokenProvider.validateToken(refreshToken)) {
+        if (refreshToken == null || !jwtTokenProvider.validateRefreshToken(refreshToken)) {
             throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
+        RefreshToken savedToken = refreshTokenRepository.findByToken(refreshToken)
+            .orElseThrow(() -> new CustomException(ErrorCode.INVALID_REFRESH_TOKEN));
+
         Long id = jwtTokenProvider.getIdFromToken(refreshToken);
+        if(!savedToken.getUser().getId().equals(id)){
+            throw new CustomException(ErrorCode.INVALID_REFRESH_TOKEN);
+        }
+
         return jwtTokenProvider.generateAccessToken(id);
     }
 

@@ -9,8 +9,10 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -39,16 +41,14 @@ public class FileController {
         return ResponseEntity.ok(imagePaths);
     }
 
-    // 특정 이미지 불러오기
-    @GetMapping("/image")
-    public ResponseEntity<byte[]> getImage(@RequestParam String filename) {
-        byte[] imageData = fileService.loadImageByFilename(filename);
-        MediaType mediaType = FileUtils.getMediaType(filename);
-
-        return ResponseEntity
-            .ok()
-            .contentType(mediaType)
-            .body(imageData);
+    // 이미지 삭제
+    @DeleteMapping("/images")
+    public ResponseEntity<Void> deleteImages(
+        @AuthenticationPrincipal Long userId,
+        @RequestBody List<String> filenames
+    ) {
+        fileService.deleteImages(userId, filenames);
+        return ResponseEntity.noContent().build();
     }
 
 }

@@ -25,8 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
 
     // 회원가입
     @PostMapping("/register")
@@ -49,8 +47,8 @@ public class AuthController {
 
     // 로그아웃
     @PostMapping("/logout")
-    public ResponseEntity<?> logout() {
-        ResponseCookie deleteCookie = userService.logout();
+    public ResponseEntity<?> logout(@CookieValue(name = "refresh_token") String refreshToken) {
+        ResponseCookie deleteCookie = userService.logout(refreshToken);
         return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, deleteCookie.toString()).build();
     }
 
