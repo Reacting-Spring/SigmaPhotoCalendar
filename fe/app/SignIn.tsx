@@ -6,17 +6,35 @@ import { ThemedText } from "@/components/ThemedText";
 import { Link, Redirect } from 'expo-router';
 import React, { useState } from "react";
 import { View } from "react-native";
+import * as SecureStore from 'expo-secure-store';
 
 export default function SignIn() {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [saveSignIn, setSaveSignIn] = useState(false);
+  const [redirect, setRedirect] = useState<React.ReactElement | null>(null);
 
   const handleSignIn = async() => {
     console.log("로그인 시도:", { id, password }, `저장 여부: ${saveSignIn}`);
     try {
       const response = await axiosInstance.post('/signin', {id, password});
       console.log("로그인 성공:", response.data);
+
+      const token = response.data;
+
+      if (token) {
+        if (saveSignIn) {
+          await SecureStore.setItemAsync('token', token);
+          console.log("토큰 저장 성공");
+        }
+
+        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+        setRedirect(<Redirect href="/Dashboard" />);
+      } else {
+        console.error("로그인 실패: 토큰이 없습니다.");
+      }
+
       return <Redirect href="/Dashboard" />;
     } catch (error) {
       console.error("로그인 실패:", error);
@@ -27,6 +45,10 @@ export default function SignIn() {
   const handleSaveSignIn = () => {
     setSaveSignIn(!saveSignIn);
   };
+
+  if (redirect) {
+    return redirect;
+  }
 
   return (
     <View

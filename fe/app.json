@@ -38,9 +38,12 @@
       [
         "expo-font",
         {
-          "fonts": ["./assets/fonts/NoonnuBasicGothicRegular.otf"]
+          "fonts": [
+            "./assets/fonts/NoonnuBasicGothicRegular.otf"
+          ]
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true
