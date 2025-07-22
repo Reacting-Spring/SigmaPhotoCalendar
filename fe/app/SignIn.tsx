@@ -1,34 +1,34 @@
-import axiosInstance from '@/api/AxiosInstance';
+import axiosInstance from "@/api/AxiosInstance";
 import { ThemedBox } from "@/components/ThemedBox";
 import { ThemedButton } from "@/components/ThemedButton";
 import { ThemedInput } from "@/components/ThemedInput";
 import { ThemedText } from "@/components/ThemedText";
-import { Link, Redirect } from 'expo-router';
+import { Link, Redirect } from "expo-router";
 import React, { useState } from "react";
 import { View } from "react-native";
-import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from "expo-secure-store";
 
 export default function SignIn() {
-  const [id, setId] = useState('');
-  const [password, setPassword] = useState('');
+  const [user_id, setId] = useState("");
+  const [password, setPassword] = useState("");
   const [saveSignIn, setSaveSignIn] = useState(false);
   const [redirect, setRedirect] = useState<React.ReactElement | null>(null);
 
-  const handleSignIn = async() => {
-    console.log("로그인 시도:", { id, password }, `저장 여부: ${saveSignIn}`);
+  const handleSignIn = async () => {
+    console.log("로그인 시도:", { user_id, password }, `저장 여부: ${saveSignIn}`);
     try {
-      const response = await axiosInstance.post('/signin', {id, password});
+      const response = await axiosInstance.post("/auth/login", { user_id, password });
       console.log("로그인 성공:", response.data);
 
       const token = response.data;
 
       if (token) {
         if (saveSignIn) {
-          await SecureStore.setItemAsync('token', token);
+          await SecureStore.setItemAsync("token", token);
           console.log("토큰 저장 성공");
         }
 
-        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
         setRedirect(<Redirect href="/Dashboard" />);
       } else {
@@ -41,7 +41,7 @@ export default function SignIn() {
       alert("로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.");
     }
   };
-    
+
   const handleSaveSignIn = () => {
     setSaveSignIn(!saveSignIn);
   };
@@ -61,7 +61,7 @@ export default function SignIn() {
       <ThemedText>아이디</ThemedText>
       <ThemedInput
         onChangeText={setId}
-        value={id}
+        value={user_id}
         placeholder="아이디를 입력하세요"
         keyboardType="default"
         style={{ marginBottom: 24 }}
@@ -74,19 +74,11 @@ export default function SignIn() {
         secureTextEntry
         keyboardType="default"
       />
-      <Link href="/SignUp" style={{ padding: 8}}>
-        <ThemedText style={{ color: '#4B72FA', marginTop: 16, fontSize: 16}}>계정이 없다면 회원가입</ThemedText>
+      <Link href="/SignUp" style={{ padding: 8 }}>
+        <ThemedText style={{ color: "#4B72FA", marginTop: 16, fontSize: 16 }}>계정이 없다면 회원가입</ThemedText>
       </Link>
-      <ThemedBox 
-        onPress={handleSaveSignIn}
-        isChecked={saveSignIn}
-        label="로그인 정보 저장"
-      />
-      <ThemedButton
-        title="로그인"
-        onPress={handleSignIn}
-        disabled={!id || !password}
-      />
+      <ThemedBox onPress={handleSaveSignIn} isChecked={saveSignIn} label="로그인 정보 저장" />
+      <ThemedButton title="로그인" onPress={handleSignIn} disabled={!user_id || !password} />
     </View>
   );
 }
