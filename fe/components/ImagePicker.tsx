@@ -3,6 +3,7 @@ import { Alert, Image, StyleSheet, View } from "react-native";
 import { launchImageLibrary, Asset } from "react-native-image-picker";
 import { ThemedButton } from "./ThemedButton";
 import { ThemedInput } from "./ThemedInput";
+import axios from "axios";
 import axiosInstance from "@/api/AxiosInstance";
 
 type Props = {
@@ -19,6 +20,8 @@ const ImagePicker: React.FC<Props> = ({ onImageSelected, formattedDate }) => {
     launchImageLibrary({ mediaType: "photo" }, (response) => {
       if (response.assets && response.assets.length > 0) {
         const asset = response.assets[0];
+        console.log(asset);
+
         const uri = asset.uri || null;
         setImageUri(uri);
         setSelectedFile(asset);
@@ -31,32 +34,29 @@ const ImagePicker: React.FC<Props> = ({ onImageSelected, formattedDate }) => {
 
   const handleImageUpload = async () => {
     console.log(`${formattedDate}의 사진 업로드`);
-    console.log("업로드 파일:", selectedFile);
+    // console.log("업로드 파일:", selectedFile);
 
     if (!imageUri || !selectedFile) {
-      console.log("12321312");
-
       Alert.alert("알림", "업로드할 사진을 선택해주세요.");
       return;
     }
     try {
       const formData = new FormData();
-      formData.append("image", {
-        uri: selectedFile.uri,
-        name: selectedFile.fileName || "upload.jpg",
-        type: selectedFile.type || "image/jpeg",
-      } as any);
 
-      formData.append("description", imgInput);
+      formData.append("image", {
+        uri: imageUri,
+        name: "upload.png",
+        type: "image/png",
+      } as any);
 
       const response = await axiosInstance.post("/files/upload", formData, {
         headers: {
-          "Content-Type": "multipart/form-data",
-          //   Authorization: `Bearer ${token}`,
+          Authorization: `Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6MSwiaWF0IjoxNzUzMjg1ODI0LCJleHAiOjE3NTMyODk0MjR9.eZ_ohmnzL6oaW5-BycgPC13Rhjn0QQAfec5nA43CBUI`,
         },
+        transformRequest: (data) => data,
       });
 
-      console.log("사진 업로드 성공:", formData);
+      console.log("사진 업로드 성공:", response);
       alert("사진이 성공적으로 업로드되었습니다.");
     } catch (error) {
       console.error("사진 업로드 실패:", error);
