@@ -4,6 +4,8 @@ import com.sigma.service.FileService;
 import com.sigma.utils.FileUtils;
 import java.time.LocalDate;
 import java.util.List;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
@@ -28,7 +30,8 @@ public class FileController {
     // 이미지 업로드
     @PostMapping("/upload")
     public ResponseEntity<String> uploadImage(@AuthenticationPrincipal Long userId,
-        @RequestParam("image") MultipartFile image) {
+        @Valid @RequestParam("image") MultipartFile image,
+        @RequestParam(value = "description", required = false) String description) {
         fileService.saveImage(userId, image);
         return ResponseEntity.ok().build();
     }
