@@ -3,7 +3,6 @@ import { Alert, Image, StyleSheet, View } from "react-native";
 import { launchImageLibrary, Asset } from "react-native-image-picker";
 import { ThemedButton } from "./ThemedButton";
 import { ThemedInput } from "./ThemedInput";
-import axios from "axios";
 import axiosInstance from "@/api/AxiosInstance";
 
 type Props = {
