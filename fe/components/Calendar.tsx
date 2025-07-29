@@ -64,7 +64,6 @@ export default function Calendar({ year, month, onDayPress }: CalendarProps) {
   const todayDay = today.getDate();
   const currentDateTag = `${todayYear}${formatMonth(todayMonth)}${formatDay(todayDay)}`;
 
-
   return (
     <View style={styles.container}>
       {daysArray.map((item, i) => {
@@ -75,13 +74,12 @@ export default function Calendar({ year, month, onDayPress }: CalendarProps) {
 
         const isHovered = hoveredIdx === i;
 
-        let dateTag = '';
-        if (item.type !== 'empty' && item.year !== undefined && item.month !== undefined && item.day !== '') {
+        let dateTag = "";
+        if (item.type !== "empty" && item.year !== undefined && item.month !== undefined && item.day !== "") {
           dateTag = `${item.year}${formatMonth(item.month)}${formatDay(item.day)}`;
         }
 
-        const isToday = item.type === 'current' && dateTag === currentDateTag;
-
+        const isToday = item.type === "current" && dateTag === currentDateTag;
 
         return (
           <Pressable
@@ -89,19 +87,14 @@ export default function Calendar({ year, month, onDayPress }: CalendarProps) {
             onPressIn={() => setHoveredIdx(i)}
             onPressOut={() => setHoveredIdx(null)}
             onPress={() => {
-              if (item.type !== 'empty') {
+              if (item.type !== "empty") {
                 onDayPress(dateTag);
               }
             }}
             style={[
               styles.item,
               {
-                backgroundColor:
-                  col === 0
-                    ? "#b44c4c"
-                    : col === 6
-                    ? "#4a6fa5"
-                    : "#212121",
+                backgroundColor: col === 0 ? "#b44c4c" : col === 6 ? "#4a6fa5" : "#212121",
                 opacity: isHovered ? 0.7 : 1,
                 zIndex: isHovered ? 1 : 0,
                 borderColor: isToday ? "#4B72FA" : "transparent",
@@ -109,9 +102,7 @@ export default function Calendar({ year, month, onDayPress }: CalendarProps) {
               },
             ]}
           >
-            <ThemedText style={[styles.dayText, { color: textColor, opacity: textOpacity }]}>
-              {item.day}
-            </ThemedText>
+            <ThemedText style={[styles.dayText, { color: textColor, opacity: textOpacity }]}>{item.day}</ThemedText>
           </Pressable>
         );
       })}
