@@ -3,7 +3,7 @@ import axiosInstance from "../api/AxiosInstance";
 import { ThemedBox } from "../components/ThemedBox";
 import { ThemedButton } from "../components/ThemedButton";
 import { ThemedInput } from "../components/ThemedInput";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function SignIn() {
@@ -11,6 +11,14 @@ export default function SignIn() {
   const [password, setPassword] = useState("");
   const [saveSignIn, setSaveSignIn] = useState(false);
   const navigate = useNavigate();
+  const { access_token } = useAuthStore();
+
+  // 이미 로그인된 사용자는 대시보드로 리다이렉트
+  useEffect(() => {
+    if (access_token) {
+      navigate("/");
+    }
+  }, [access_token, navigate]);
 
   const handleSignIn = async () => {
     console.log("로그인 시도:", { user_id, password }, `저장 여부: ${saveSignIn}`);
@@ -24,11 +32,9 @@ export default function SignIn() {
 
       const { access_token } = response.data;
       useAuthStore.getState().setAccessToken(access_token);
-      console.log("토큰 저장 성공:", access_token);
       axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
-      navigate("/Dashboard");
+      navigate("/");
     } catch (error) {
-      console.error("로그인 실패:", error);
       alert("로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.");
     }
   };

@@ -20,15 +20,15 @@ axiosInstance.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// 응답 인터셉터: 403 처리 및 토큰 갱신
+// 응답 인터셉터: 401 처리 및 토큰 갱신
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    // 403이고, 재시도 플래그가 없고, /refresh가 아닌 경우만
+    // 401이고, 재시도 플래그가 없고, /refresh가 아닌 경우만
     if (
       error.response &&
-      error.response.status === 403 &&
+      error.response.status === 401 &&
       !originalRequest._retry &&
       !originalRequest.url.endsWith("/refresh")
     ) {
@@ -45,11 +45,12 @@ axiosInstance.interceptors.response.use(
           return axiosInstance(originalRequest);
         }
       } catch (refreshError) {
-        // /refresh도 403이면 로그아웃 처리
+        // /refresh도 401이면 로그아웃 처리
         const err = refreshError as any;
-        if (err.response && err.response.status === 403) {
+        if (err.response && err.response.status === 401) {
           useAuthStore.getState().clearAccessToken();
-          window.location.href = "/"; // 로그인 화면으로 이동
+          // window.location.href 대신 React Router의 navigate를 사용하기 위해 이벤트 발생
+          window.dispatchEvent(new CustomEvent("auth-expired"));
         }
         return Promise.reject(refreshError);
       }
