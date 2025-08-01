@@ -47,8 +47,8 @@ public class FileServiceImpl implements FileService {
         String day = String.format("%02d", today.getDayOfMonth());
 
         // 사용자/연/월/일 폴더 경로
-        String folderPath = String.format("%s/%d/%s/%s/%s",
-            uploadDir, userId, year, month, day);
+        String folderPath = String.format("%s/%s/%s/%s",
+            uploadDir, year, month, day);
 
         File folder = new File(folderPath);
         if (!folder.exists()) {
