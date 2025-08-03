@@ -2,7 +2,7 @@ import axios from "axios";
 import useAuthStore from "../store/AuthStore";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 5000,
   withCredentials: true,
 });
@@ -25,6 +25,7 @@ axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+
     // 401이고, 재시도 플래그가 없고, /refresh가 아닌 경우만
     if (
       error.response &&
