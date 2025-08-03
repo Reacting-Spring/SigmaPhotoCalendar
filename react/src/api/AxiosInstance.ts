@@ -2,7 +2,7 @@ import axios from "axios";
 import useAuthStore from "../store/AuthStore";
 
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: import.meta.env.VITE_BASE_URL,
   timeout: 5000,
   withCredentials: true,
 });
@@ -35,7 +35,7 @@ axiosInstance.interceptors.response.use(
     ) {
       originalRequest._retry = true;
       try {
-        const refreshResponse = await axiosInstance.post("/refresh");
+        const refreshResponse = await axiosInstance.post("/auth/refresh");
         const { access_token } = refreshResponse.data;
         if (access_token) {
           useAuthStore.getState().setAccessToken(access_token);

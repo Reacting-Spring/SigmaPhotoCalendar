@@ -30,8 +30,8 @@ public class FileController {
     // 이미지 업로드
     @PostMapping("/upload")
     public ResponseEntity<String> uploadImage(@AuthenticationPrincipal Long userId,
-        @Valid @RequestParam("image") MultipartFile image) {
-        fileService.saveImage(userId, image);
+        @Valid @RequestParam("image") MultipartFile image, @Valid @RequestParam("date") LocalDate date) {
+        fileService.saveImage(userId, image, date);
         return ResponseEntity.ok().build();
     }
 

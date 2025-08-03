@@ -1,0 +1,17 @@
+.themed-input-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px;
+  height: 100%;
+}
+
+.themed-input {
+  width: 90%;
+  max-width: 300px;
+  border: 1px solid gray;
+  border-radius: 20px;
+  padding: 10px 20px;
+  outline: none;
+  font-family: "NoonnuBasicGothicRegular";
+}

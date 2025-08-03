@@ -1,0 +1,52 @@
+.pwa-install-prompt {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #4b72fa;
+  color: white;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  max-width: 90%;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pwa-install-title {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.pwa-install-description {
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.pwa-install-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.pwa-install-button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.pwa-install-button.dismiss {
+  background-color: transparent;
+  color: white;
+}
+
+.pwa-install-button.install {
+  background-color: white;
+  color: #4b72fa;
+  font-weight: bold;
+}

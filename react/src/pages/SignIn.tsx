@@ -1,10 +1,11 @@
-import useAuthStore from "../store/AuthStore";
-import axiosInstance from "../api/AxiosInstance";
-import { ThemedButton } from "../components/ThemedButton";
-import { ThemedInput } from "../components/ThemedInput";
+import useAuthStore from "@/store/AuthStore";
+import axiosInstance from "@/api/AxiosInstance";
+import { ThemedButton } from "@/components/ThemedButton";
+import { ThemedInput } from "@/components/ThemedInput";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { showErrorToast } from "../components/Toast";
+import { showErrorToast } from "@/components/Toast";
+import "@/css/SignIn.css";
 
 export default function SignIn() {
   const [user_id, setId] = useState("");
@@ -42,22 +43,28 @@ export default function SignIn() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>아이디</div>
-      <ThemedInput
-        onChange={(e) => setId(e.target.value)}
-        value={user_id}
-        placeholder="아이디를 입력하세요"
-        style={{ marginBottom: 24 }}
-      />
-      <div>비밀번호</div>
-      <ThemedInput
-        onChange={(e) => setPassword(e.target.value)}
-        value={password}
-        placeholder="비밀번호를 입력하세요"
-        type="password"
-      />
-      <ThemedButton title="로그인" type="submit" disabled={!user_id || !password} />
-    </form>
+    <div className="container">
+      <form className="login-form" onSubmit={handleSubmit}>
+        <div className="input-container">
+          <div className="left-text">아이디</div>
+          <ThemedInput
+            onChange={(e) => setId(e.target.value)}
+            value={user_id}
+            placeholder="아이디를 입력하세요"
+            className="input-margin-bottom"
+          />
+        </div>
+        <div className="input-container">
+          <div className="left-text">비밀번호</div>
+          <ThemedInput
+            onChange={(e) => setPassword(e.target.value)}
+            value={password}
+            placeholder="비밀번호를 입력하세요"
+            type="password"
+          />
+        </div>
+        <ThemedButton title="로그인" type="submit" disabled={!user_id || !password} />
+      </form>
+    </div>
   );
 }

@@ -34,19 +34,15 @@ public class FileServiceImpl implements FileService {
     @Value("${file.upload-dir}")
     private String uploadDir;
     
-    @Value("${file.base-url}")
-    private String baseUrl;
-
     @Transactional
     @Override
-    public void saveImage(Long userId, MultipartFile image) {
+    public void saveImage(Long userId, MultipartFile image, LocalDate date) {
 
-        LocalDate today = LocalDate.now();
-        String year = String.valueOf(today.getYear());
-        String month = String.format("%02d", today.getMonthValue());
-        String day = String.format("%02d", today.getDayOfMonth());
+        String year = String.valueOf(date.getYear());
+        String month = String.format("%02d", date.getMonthValue());
+        String day = String.format("%02d", date.getDayOfMonth());
 
-        // 사용자/연/월/일 폴더 경로
+        // 연/월/일 폴더 경로
         String folderPath = String.format("%s/%s/%s/%s",
             uploadDir, year, month, day);
 
@@ -75,8 +71,8 @@ public class FileServiceImpl implements FileService {
         imageRepository.save(Image.builder()
             .user(userRepository.getReferenceById(userId))
             .filename(uuidName) // DB엔 파일명만 저장
-            .folderPath(String.format("%d/%s/%s/%s", userId, year, month, day)) // 경로만 저장 (옵션)
-            .createdAt(today)
+            .folderPath(String.format("%s/%s/%s", year, month, day)) // 경로만 저장 (옵션)
+            .createdAt(date)
             .build());
     }
 
@@ -85,7 +81,7 @@ public class FileServiceImpl implements FileService {
         List<Image> images = imageRepository.findAllByUserIdAndCreatedAt(userId, date);
 
         return images.stream()
-            .map(img -> baseUrl + "/" + img.getFolderPath() + "/" + img.getFilename())
+            .map(img -> "/" + img.getFolderPath() + "/" + img.getFilename())
             .toList();
     }
 
