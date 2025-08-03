@@ -1,0 +1,25 @@
+.themed-button {
+  height: 40px;
+  width: 100%;
+  max-width: 300px;
+  background-color: #4b72fa;
+  border-radius: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  font-family: "NoonnuBasicGothicRegular";
+}
+
+.themed-button:disabled {
+  background-color: #b0b0b0;
+  cursor: not-allowed;
+}
+
+.themed-button-text {
+  color: #fff;
+  font-size: 16px;
+}

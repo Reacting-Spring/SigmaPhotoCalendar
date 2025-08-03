@@ -8,4 +8,7 @@
 body {
   font-family: NoonnuBasicGothicRegular;
   font-size: 20;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }

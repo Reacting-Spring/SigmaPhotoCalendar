@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import Calendar from "../components/Calendar";
+import Calendar from "@/components/Calendar";
 import { useCalendar } from "./CalendarContext";
-import { ThemedButton } from "../components/ThemedButton";
-import axiosInstance from "../api/AxiosInstance";
-import useAuthStore from "../store/AuthStore";
+import { ThemedButton } from "@/components/ThemedButton";
+import axiosInstance from "@/api/AxiosInstance";
+import useAuthStore from "@/store/AuthStore";
+import "@/css/Dashboard.css";
 
 export default function Dashboard() {
   const { year, month, setYear, setMonth } = useCalendar();
@@ -41,25 +42,15 @@ export default function Dashboard() {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <button
-          onClick={handlePrevMonth}
-          style={styles.monthButton}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f0f0f0")}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
-        >
+    <div className="dashboard-container">
+      <div className="dashboard-header">
+        <button onClick={handlePrevMonth} className="month-button">
           ◀
         </button>
-        <h1 style={styles.title}>
+        <h1 className="dashboard-title">
           {year}년 {month}월
         </h1>
-        <button
-          onClick={handleNextMonth}
-          style={styles.monthButton}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#f0f0f0")}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
-        >
+        <button onClick={handleNextMonth} className="month-button">
           ▶
         </button>
       </div>
@@ -68,39 +59,3 @@ export default function Dashboard() {
     </div>
   );
 }
-
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    minHeight: "100vh",
-    padding: 20,
-  },
-  header: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 24,
-    gap: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    margin: 0,
-    minWidth: 120,
-    textAlign: "center",
-  },
-  monthButton: {
-    fontSize: 20,
-    color: "#4B72FA",
-    backgroundColor: "transparent",
-    border: "none",
-    cursor: "pointer",
-    padding: "8px 12px",
-    borderRadius: 4,
-    transition: "background-color 0.2s",
-  },
-};

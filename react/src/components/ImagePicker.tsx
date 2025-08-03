@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { ThemedButton } from "./ThemedButton";
 import axiosInstance from "../api/AxiosInstance";
 import { showErrorToast, showSuccessToast } from "./Toast";
+import "../css/ImagePicker.css";
 
 type Props = {
   onImageSelected?: (uri: string) => void;
@@ -53,6 +54,7 @@ const ImagePicker: React.FC<Props> = ({ onImageSelected, formattedDate }) => {
     try {
       const formData = new FormData();
       formData.append("image", selectedFile);
+      formData.append("date", formattedDate ?? "");
 
       await axiosInstance.post("/files/upload", formData);
       showSuccessToast("사진이 성공적으로 업로드되었습니다.");
@@ -79,91 +81,42 @@ const ImagePicker: React.FC<Props> = ({ onImageSelected, formattedDate }) => {
   };
 
   return (
-    <div style={styles.container}>
-      <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} style={{ display: "none" }} />
+    <div className="image-picker-container">
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+        className="image-picker-hidden-input"
+      />
       <input
         ref={cameraInputRef}
         type="file"
         accept="image/*"
         capture="environment"
         onChange={handleFileChange}
-        style={{ display: "none" }}
+        className="image-picker-hidden-input"
       />
-      <div style={styles.buttonContainer}>
-        <ThemedButton title="갤러리에서 선택" onPress={selectFromGallery} style={styles.selectButton} />
-        <ThemedButton title="카메라로 촬영" onPress={selectFromCamera} style={styles.selectButton} />
+      <div className="image-picker-button-container">
+        <ThemedButton title="갤러리에서 선택" onPress={selectFromGallery} className="image-picker-select-button" />
+        <ThemedButton title="카메라로 촬영" onPress={selectFromCamera} className="image-picker-select-button" />
       </div>
       {imageUri ? (
-        <img src={imageUri} alt="선택된 이미지" style={styles.image} />
+        <img src={imageUri} alt="선택된 이미지" className="image-picker-image" />
       ) : (
-        <div style={styles.noImageContainer}>
-          <div style={styles.noImageIcon}>📷</div>
-          <div style={styles.noImageText}>이미지를 선택해주세요</div>
+        <div className="image-picker-no-image-container">
+          <div className="image-picker-no-image-icon">📷</div>
+          <div className="image-picker-no-image-text">이미지를 선택해주세요</div>
         </div>
       )}
       <ThemedButton
         title="사진 업로드"
         onPress={handleImageUpload}
         disabled={!selectedFile}
-        style={{ width: "90%", maxWidth: 300, height: 50 }}
+        className="image-picker-upload-button"
       />
     </div>
   );
-};
-
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    width: "100%",
-    maxWidth: 500,
-    padding: 20,
-  },
-  buttonContainer: {
-    display: "flex",
-    gap: 15,
-    marginBottom: 25,
-    width: "100%",
-    justifyContent: "center",
-  },
-  selectButton: {
-    width: "45%",
-    maxWidth: 200,
-    height: 50,
-    marginTop: 0,
-  },
-  image: {
-    width: "90%",
-    maxHeight: 350,
-    marginTop: 25,
-    marginBottom: 20,
-    borderRadius: 12,
-    objectFit: "cover",
-  },
-  noImageContainer: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    width: "90%",
-    height: 200,
-    marginTop: 25,
-    marginBottom: 20,
-    border: "2px dashed #ccc",
-    borderRadius: 12,
-    backgroundColor: "#f9f9f9",
-  },
-  noImageIcon: {
-    fontSize: 48,
-    marginBottom: 10,
-    opacity: 0.6,
-  },
-  noImageText: {
-    fontSize: 16,
-    color: "#666",
-    textAlign: "center",
-  },
 };
 
 export default ImagePicker;

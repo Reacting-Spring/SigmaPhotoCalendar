@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import "@/css/Toast.css";
 
 interface ToastProps {
   message: string;
@@ -21,18 +22,6 @@ export function Toast({ message, type = "info", duration = 3000, onClose }: Toas
     return () => clearTimeout(timer);
   }, [duration, onClose]);
 
-  const getBackgroundColor = () => {
-    switch (type) {
-      case "success":
-        return "#4CAF50";
-      case "error":
-        return "#F44336";
-      case "info":
-      default:
-        return "#4B72FA";
-    }
-  };
-
   const getIcon = () => {
     switch (type) {
       case "success":
@@ -46,50 +35,15 @@ export function Toast({ message, type = "info", duration = 3000, onClose }: Toas
   };
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        top: "20px",
-        left: "50%",
-        transform: `translateX(-50%) translateY(${isVisible ? "0" : "-100px"})`,
-        backgroundColor: getBackgroundColor(),
-        color: "white",
-        padding: "12px 20px",
-        borderRadius: "8px",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-        zIndex: 10000,
-        maxWidth: "90%",
-        width: "auto",
-        minWidth: "200px",
-        display: "flex",
-        alignItems: "center",
-        gap: "8px",
-        transition: "transform 0.3s ease-in-out",
-        fontSize: "14px",
-        fontWeight: "500",
-      }}
-    >
-      <span style={{ fontSize: "16px" }}>{getIcon()}</span>
+    <div className={`toast ${type} ${isVisible ? "" : "hidden"}`}>
+      <span className="toast-icon">{getIcon()}</span>
       <span>{message}</span>
       <button
         onClick={() => {
           setIsVisible(false);
           setTimeout(() => onClose?.(), 300);
         }}
-        style={{
-          background: "none",
-          border: "none",
-          color: "white",
-          cursor: "pointer",
-          fontSize: "18px",
-          marginLeft: "auto",
-          padding: "0",
-          width: "20px",
-          height: "20px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
+        className="toast-close-button"
       >
         ×
       </button>

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import useAuthStore from "../store/AuthStore";
+import useAuthStore from "@/store/AuthStore";
 import { showErrorToast } from "./Toast";
 
 interface ProtectedRouteProps {

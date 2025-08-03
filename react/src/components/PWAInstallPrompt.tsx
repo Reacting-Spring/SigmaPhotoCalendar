@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import "@/css/PWAInstallPrompt.css";
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -58,55 +59,14 @@ export function PWAInstallPrompt() {
   if (!showInstallPrompt) return null;
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        bottom: 20,
-        left: "50%",
-        transform: "translateX(-50%)",
-        backgroundColor: "#4B72FA",
-        color: "white",
-        padding: "16px 20px",
-        borderRadius: "12px",
-        boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-        zIndex: 1000,
-        maxWidth: "90%",
-        width: "400px",
-        display: "flex",
-        flexDirection: "column",
-        gap: "12px",
-      }}
-    >
-      <div style={{ fontSize: "16px", fontWeight: "bold" }}>앱을 설치하시겠습니까?</div>
-      <div style={{ fontSize: "14px", opacity: 0.9 }}>홈 화면에 추가하여 더 빠르게 접근할 수 있습니다.</div>
-      <div style={{ display: "flex", gap: "8px", justifyContent: "flex-end" }}>
-        <button
-          onClick={handleDismiss}
-          style={{
-            padding: "8px 16px",
-            border: "none",
-            borderRadius: "6px",
-            backgroundColor: "transparent",
-            color: "white",
-            cursor: "pointer",
-            fontSize: "14px",
-          }}
-        >
+    <div className="pwa-install-prompt">
+      <div className="pwa-install-title">앱을 설치하시겠습니까?</div>
+      <div className="pwa-install-description">홈 화면에 추가하여 더 빠르게 접근할 수 있습니다.</div>
+      <div className="pwa-install-buttons">
+        <button onClick={handleDismiss} className="pwa-install-button dismiss">
           나중에
         </button>
-        <button
-          onClick={handleInstallClick}
-          style={{
-            padding: "8px 16px",
-            border: "none",
-            borderRadius: "6px",
-            backgroundColor: "white",
-            color: "#4B72FA",
-            cursor: "pointer",
-            fontSize: "14px",
-            fontWeight: "bold",
-          }}
-        >
+        <button onClick={handleInstallClick} className="pwa-install-button install">
           설치
         </button>
       </div>
