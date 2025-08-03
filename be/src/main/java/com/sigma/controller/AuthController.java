@@ -27,13 +27,13 @@ public class AuthController {
     private final UserService userService;
 
     // 회원가입
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request) {
-
-        userService.register(request);
-
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
+    // @PostMapping("/register")
+    // public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request) {
+    //
+    //     userService.register(request);
+    //
+    //     return ResponseEntity.status(HttpStatus.CREATED).build();
+    // }
 
     // 로그인
     @PostMapping("/login")

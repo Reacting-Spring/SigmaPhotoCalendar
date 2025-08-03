@@ -94,8 +94,8 @@ public class JwtTokenProvider {
     public ResponseCookie createRefreshTokenCookie(String refreshToken) {
         return ResponseCookie.from("refresh_token", refreshToken)
             .httpOnly(true)
-            .secure(true)
-            .sameSite("Strict") // CSRF 방지
+            .secure(false)
+            .sameSite("Lax")
             .path("/") // 모든 경로에서 사용 가능
             .maxAge(refreshTokenExpirationMillis)
             .build();
@@ -105,8 +105,8 @@ public class JwtTokenProvider {
 
         return ResponseCookie.from("refresh_token", refreshToken)
             .httpOnly(true)
-            .secure(true)
-            .sameSite("Strict") // CSRF 방지
+            .secure(false)
+            .sameSite("Lax")
             .path("/") // 모든 경로에서 사용 가능
             .maxAge(0)
             .build();

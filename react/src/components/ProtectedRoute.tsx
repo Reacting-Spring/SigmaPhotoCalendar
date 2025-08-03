@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuthStore from "../store/AuthStore";
+import { showErrorToast } from "./Toast";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -18,7 +19,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   useEffect(() => {
     const handleAuthExpired = () => {
-      alert("로그인 세션이 만료되었습니다. 다시 로그인해주세요.");
+      showErrorToast("로그아웃되었습니다. 다시 로그인해주세요.");
       navigate("/login");
     };
 

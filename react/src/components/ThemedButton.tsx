@@ -2,15 +2,17 @@ import React from "react";
 
 interface ThemedButtonProps {
   title: string;
-  onPress: () => void;
+  onPress?: () => void;
   disabled?: boolean;
   style?: React.CSSProperties;
   textStyle?: React.CSSProperties;
+  type?: "button" | "submit" | "reset";
 }
 
-export function ThemedButton({ title, onPress, disabled, style, textStyle }: ThemedButtonProps) {
+export function ThemedButton({ title, onPress, disabled, style, textStyle, type = "button" }: ThemedButtonProps) {
   return (
     <button
+      type={type}
       onClick={onPress}
       disabled={disabled}
       style={{

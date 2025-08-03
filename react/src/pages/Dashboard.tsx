@@ -37,11 +37,7 @@ export default function Dashboard() {
       await axiosInstance.post("/auth/logout");
       useAuthStore.getState().clearAccessToken();
       window.dispatchEvent(new CustomEvent("auth-expired"));
-      navigate("/login");
-    } catch (error: any) {
-      console.error("로그아웃 실패:", error.response ? error.response.data : error.message);
-      alert("로그아웃에 실패했습니다.");
-    }
+    } catch (error: any) {}
   };
 
   return (

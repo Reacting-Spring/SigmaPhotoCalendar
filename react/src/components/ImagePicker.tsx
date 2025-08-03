@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ThemedButton } from "./ThemedButton";
-import { ThemedInput } from "./ThemedInput";
 import axiosInstance from "../api/AxiosInstance";
+import { showErrorToast, showSuccessToast } from "./Toast";
 
 type Props = {
   onImageSelected?: (uri: string) => void;
@@ -10,7 +10,6 @@ type Props = {
 
 const ImagePicker: React.FC<Props> = ({ onImageSelected, formattedDate }) => {
   const [imageUri, setImageUri] = useState<string | null>(null);
-  const [imgInput, setImgInput] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
@@ -48,7 +47,7 @@ const ImagePicker: React.FC<Props> = ({ onImageSelected, formattedDate }) => {
     console.log(`${formattedDate}의 사진 업로드`);
 
     if (!selectedFile) {
-      alert("업로드할 사진을 선택해주세요.");
+      showErrorToast("업로드할 사진을 선택해주세요.");
       return;
     }
     try {
@@ -56,8 +55,14 @@ const ImagePicker: React.FC<Props> = ({ onImageSelected, formattedDate }) => {
       formData.append("image", selectedFile);
 
       await axiosInstance.post("/files/upload", formData);
-      alert("사진이 성공적으로 업로드되었습니다.");
-    } catch (error: any) {}
+      showSuccessToast("사진이 성공적으로 업로드되었습니다.");
+    } catch (error: any) {
+      if (error.response?.status === 413) {
+        showErrorToast("이미지 용량이 너무 큽니다. 더 작은 이미지를 선택해주세요.");
+      } else {
+        showErrorToast("이미지 업로드에 실패했습니다. 다시 시도해주세요.");
+      }
+    }
 
     // 메모리 정리
     if (imageUri) {
@@ -96,12 +101,6 @@ const ImagePicker: React.FC<Props> = ({ onImageSelected, formattedDate }) => {
           <div style={styles.noImageText}>이미지를 선택해주세요</div>
         </div>
       )}
-      <ThemedInput
-        onChange={(e) => setImgInput(e.target.value)}
-        value={imgInput}
-        placeholder="설명을 입력하세요"
-        style={{ marginTop: 20, marginBottom: 15, width: "90%" }}
-      />
       <ThemedButton
         title="사진 업로드"
         onPress={handleImageUpload}
