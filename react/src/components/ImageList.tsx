@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import axiosInstance from "@/api/AxiosInstance";
+import { showErrorToast, showInfoToast, showSuccessToast } from "./Toast";
+import { showDeleteConfirm, showMultiDeleteConfirm } from "./ConfirmDialog";
 import "@/css/ImageList.css";
-import { showErrorToast, showInfoToast } from "./Toast";
 
 type Props = {
   formattedDate: string;
@@ -22,6 +23,7 @@ export default function ImageList({ formattedDate }: Props) {
   const [isAllSelected, setIsAllSelected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [downloading, setDownloading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   // 이미지 목록 가져오기
   useEffect(() => {
@@ -33,7 +35,6 @@ export default function ImageList({ formattedDate }: Props) {
             date: formattedDate,
           },
         });
-
         const imageList: ImageItem[] = response.data.map((src: string, index: number) => ({
           id: `${index}-${src.split("/").pop()}`,
           src: src,
@@ -41,7 +42,6 @@ export default function ImageList({ formattedDate }: Props) {
           loading: true,
           error: false,
         }));
-
         setImages(imageList);
         console.log("이미지 목록:", imageList);
       } catch (error) {
@@ -65,9 +65,7 @@ export default function ImageList({ formattedDate }: Props) {
             const response = await axiosInstance.get(`/static/uploads${image.src}`, {
               responseType: "blob",
             });
-
             const blobUrl = URL.createObjectURL(response.data);
-
             setImages((prevImages) =>
               prevImages.map((img) => (img.id === image.id ? { ...img, blobUrl, loading: false } : img))
             );
@@ -125,7 +123,6 @@ export default function ImageList({ formattedDate }: Props) {
       const response = await axiosInstance.get(`/static/uploads${image.src}`, {
         responseType: "blob",
       });
-
       const blob = response.data;
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -149,10 +146,8 @@ export default function ImageList({ formattedDate }: Props) {
     }
 
     setDownloading(true);
-
     try {
       const selectedImageItems = images.filter((img) => selectedImages.has(img.id));
-
       if (selectedImages.size === 1) {
         // 단일 이미지 다운로드
         await downloadImage(selectedImageItems[0]);
@@ -164,7 +159,6 @@ export default function ImageList({ formattedDate }: Props) {
           await new Promise((resolve) => setTimeout(resolve, 500));
         }
       }
-
       // 다운로드 후 선택 초기화
       setSelectedImages(new Set());
       setIsAllSelected(false);
@@ -173,6 +167,62 @@ export default function ImageList({ formattedDate }: Props) {
       showErrorToast("이미지 다운로드에 실패했습니다.");
     } finally {
       setDownloading(false);
+    }
+  };
+
+  // 단일 이미지 삭제
+  const deleteImage = async (image: ImageItem) => {
+    const confirmed = await showDeleteConfirm(image.name);
+    if (!confirmed) return;
+
+    try {
+      await axiosInstance.delete("/files/images", {
+        data: [image.name],
+      });
+      // 성공 시 이미지 목록에서 제거
+      setImages((prevImages) => prevImages.filter((img) => img.id !== image.id));
+      // 선택된 이미지에서도 제거
+      setSelectedImages((prevSelected) => {
+        const newSelected = new Set(prevSelected);
+        newSelected.delete(image.id);
+        return newSelected;
+      });
+      showSuccessToast("이미지가 삭제되었습니다.");
+    } catch (error) {
+      console.error("이미지 삭제 실패:", error);
+      showErrorToast("이미지 삭제에 실패했습니다.");
+    }
+  };
+
+  // 선택된 이미지들 삭제
+  const handleDeleteSelected = async () => {
+    if (selectedImages.size === 0) {
+      showInfoToast("삭제할 이미지를 선택해주세요.");
+      return;
+    }
+
+    const selectedImageItems = images.filter((img) => selectedImages.has(img.id));
+    const imageNames = selectedImageItems.map((img) => img.name);
+
+    const confirmed = await showMultiDeleteConfirm(selectedImages.size, imageNames);
+    if (!confirmed) return;
+
+    setDeleting(true);
+    try {
+      await axiosInstance.delete("/files/images", {
+        data: imageNames,
+      });
+      // 성공 시 이미지 목록에서 제거
+      setImages((prevImages) => prevImages.filter((img) => !selectedImages.has(img.id)));
+      // 선택 초기화
+      setSelectedImages(new Set());
+      setIsAllSelected(false);
+      showSuccessToast(`${imageNames.length}개의 이미지가 삭제되었습니다.`);
+    } catch (error) {
+      console.error("이미지 삭제 실패:", error);
+      showErrorToast("이미지 삭제에 실패했습니다.");
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -194,14 +244,22 @@ export default function ImageList({ formattedDate }: Props) {
               전체 선택 ({selectedImages.size}/{images.length})
             </label>
           </div>
-
-          <button
-            className="download-button"
-            onClick={handleDownloadSelected}
-            disabled={selectedImages.size === 0 || downloading}
-          >
-            {downloading ? "다운로드 중..." : `선택된 이미지 다운로드 (${selectedImages.size}개)`}
-          </button>
+          <div className="action-buttons">
+            <button
+              className="download-button"
+              onClick={handleDownloadSelected}
+              disabled={selectedImages.size === 0 || downloading || deleting}
+            >
+              {downloading ? "다운로드 중..." : `다운로드 (${selectedImages.size}개)`}
+            </button>
+            <button
+              className="delete-button"
+              onClick={handleDeleteSelected}
+              disabled={selectedImages.size === 0 || downloading || deleting}
+            >
+              {deleting ? "삭제 중..." : `삭제 (${selectedImages.size}개)`}
+            </button>
+          </div>
         </div>
       )}
 
@@ -224,28 +282,40 @@ export default function ImageList({ formattedDate }: Props) {
                 ) : (
                   <img src={image.blobUrl || "/placeholder.svg"} alt={image.name} loading="lazy" />
                 )}
-
                 <div className="image-overlay">
                   <input
                     type="checkbox"
                     className="image-checkbox"
                     checked={selectedImages.has(image.id)}
                     onChange={() => handleImageSelect(image.id)}
-                    disabled={image.loading || image.error}
+                    disabled={image.loading || image.error || deleting}
                   />
                 </div>
-
                 {!image.loading && !image.error && (
-                  <button
-                    className="download-single-button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      downloadImage(image);
-                    }}
-                    title="이미지 다운로드"
-                  >
-                    ⬇
-                  </button>
+                  <div className="image-actions">
+                    <button
+                      className="download-single-button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        downloadImage(image);
+                      }}
+                      title="이미지 다운로드"
+                      disabled={deleting}
+                    >
+                      ⬇
+                    </button>
+                    <button
+                      className="delete-single-button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteImage(image);
+                      }}
+                      title="이미지 삭제"
+                      disabled={deleting}
+                    >
+                      🗑
+                    </button>
+                  </div>
                 )}
               </div>
               <div className="image-name">{image.name}</div>

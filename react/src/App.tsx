@@ -8,35 +8,38 @@ import SignIn from "./pages/SignIn.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import DateDetailScreen from "./pages/date/[date].tsx";
 import { CalendarProvider } from "./pages/CalendarContext.tsx";
+import { ConfirmDialogManager } from "./components/ConfirmDialog.tsx";
 
 function App() {
   return (
     <ToastManager>
-      <CalendarProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute>
-                  <Dashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/date/:date"
-              element={
-                <ProtectedRoute>
-                  <DateDetailScreen />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/login" element={<SignIn />} />
-          </Routes>
-        </BrowserRouter>
-        <PWABadge />
-        <PWAInstallPrompt />
-      </CalendarProvider>
+      <ConfirmDialogManager>
+        <CalendarProvider>
+          <BrowserRouter>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/date/:date"
+                element={
+                  <ProtectedRoute>
+                    <DateDetailScreen />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/login" element={<SignIn />} />
+            </Routes>
+          </BrowserRouter>
+          <PWABadge />
+          <PWAInstallPrompt />
+        </CalendarProvider>
+      </ConfirmDialogManager>
     </ToastManager>
   );
 }

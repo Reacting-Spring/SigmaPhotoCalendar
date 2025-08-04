@@ -1,7 +1,7 @@
 .image-list-container {
   padding: 20px;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 30px auto;
 }
 
 .loading {
@@ -50,6 +50,11 @@
   cursor: pointer;
 }
 
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
 .download-button {
   padding: 10px 20px;
   background-color: #28a745;
@@ -66,6 +71,26 @@
 }
 
 .download-button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+.delete-button {
+  padding: 10px 20px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.delete-button:hover:not(:disabled) {
+  background-color: #c82333;
+}
+
+.delete-button:disabled {
   background-color: #6c757d;
   cursor: not-allowed;
 }
@@ -170,14 +195,19 @@
   cursor: pointer;
 }
 
-.download-single-button {
+.image-actions {
   position: absolute;
   bottom: 10px;
   right: 10px;
+  display: flex;
+  gap: 10px;
+  transition: opacity 0.2s;
+}
+
+.download-single-button,
+.delete-single-button {
   width: 35px;
   height: 35px;
-  background-color: rgba(40, 167, 69, 0.9);
-  color: white;
   border: none;
   border-radius: 50%;
   cursor: pointer;
@@ -186,16 +216,32 @@
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
-  opacity: 0;
 }
 
-.image-item:hover .download-single-button {
-  opacity: 1;
+.download-single-button {
+  background-color: rgba(40, 167, 69, 0.9);
+  color: white;
 }
 
-.download-single-button:hover {
+.download-single-button:hover:not(:disabled) {
   background-color: rgba(40, 167, 69, 1);
   transform: scale(1.1);
+}
+
+.delete-single-button {
+  background-color: rgba(220, 53, 69, 0.9);
+  color: white;
+}
+
+.delete-single-button:hover:not(:disabled) {
+  background-color: rgba(220, 53, 69, 1);
+  transform: scale(1.1);
+}
+
+.download-single-button:disabled,
+.delete-single-button:disabled {
+  background-color: rgba(108, 117, 125, 0.9);
+  cursor: not-allowed;
 }
 
 .image-name {
@@ -224,13 +270,19 @@
     align-items: stretch;
   }
 
-  .download-button {
+  .action-buttons {
     width: 100%;
+    justify-content: space-between;
+  }
+
+  .download-button,
+  .delete-button {
+    flex: 1;
     padding: 12px;
   }
 
-  .download-single-button {
-    opacity: 1;
+  .image-actions {
+    opacity: 1; /* 모바일에서는 항상 표시 */
   }
 }
 
@@ -242,5 +294,10 @@
 
   .image-list-container {
     padding: 10px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 10px;
   }
 }
