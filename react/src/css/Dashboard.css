@@ -6,6 +6,33 @@
   min-height: 100vh;
   padding: 20px;
   box-sizing: border-box;
+  position: relative;
+}
+
+/* 오른쪽 위 로그아웃 버튼 */
+.dashboard-logout-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.dashboard-logout-button:hover {
+  background-color: #c82333;
+  transform: translateY(-1px);
+}
+
+.dashboard-logout-button:active {
+  transform: translateY(0);
 }
 
 .dashboard-header {
@@ -37,4 +64,247 @@
 
 .month-button:hover {
   background-color: #f0f0f0;
+}
+
+/* 큰 정사각형 사진 촬영 버튼 */
+.dashboard-photo-button {
+  width: 200px;
+  height: 200px;
+  background-color: #4b72fa;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 30px 0;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(75, 114, 250, 0.3);
+}
+
+.dashboard-photo-button:hover {
+  background-color: #3d5af1;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px rgba(75, 114, 250, 0.4);
+}
+
+.dashboard-photo-button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(75, 114, 250, 0.3);
+}
+
+.dashboard-photo-icon {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.dashboard-photo-text {
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.2;
+}
+
+/* 숨겨진 카메라 input */
+.dashboard-hidden-input {
+  display: none;
+}
+
+/* 로그아웃 확인 모달 */
+.logout-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.logout-modal-content {
+  background-color: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.logout-modal-header {
+  padding: 20px 20px 0 20px;
+  text-align: center;
+}
+
+.logout-modal-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.logout-modal-body {
+  padding: 20px;
+  text-align: center;
+}
+
+.logout-modal-body p {
+  margin: 0;
+  font-size: 16px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.logout-modal-actions {
+  display: flex;
+  gap: 12px;
+  padding: 0 20px 20px 20px;
+}
+
+.logout-modal-cancel,
+.logout-modal-confirm {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-modal-confirm {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  border: 1px solid #dee2e6;
+}
+
+.logout-modal-confirm:hover:not(:disabled) {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.logout-modal-cancel {
+  background-color: #dc3545;
+  color: white;
+}
+
+.logout-modal-cancel:hover:not(:disabled) {
+  background-color: #c82333;
+  transform: translateY(-1px);
+}
+
+.logout-modal-cancel:disabled,
+.logout-modal-confirm:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .dashboard-logout-button {
+    top: 15px;
+    right: 15px;
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+
+  .dashboard-photo-button {
+    width: 180px;
+    height: 180px;
+    border-radius: 16px;
+    margin: 25px 0;
+  }
+
+  .dashboard-photo-icon {
+    font-size: 40px;
+  }
+
+  .dashboard-photo-text {
+    font-size: 15px;
+  }
+
+  .logout-modal-overlay {
+    padding: 15px;
+  }
+
+  .logout-modal-content {
+    max-width: 100%;
+  }
+
+  .logout-modal-header h3 {
+    font-size: 18px;
+  }
+
+  .logout-modal-body p {
+    font-size: 15px;
+  }
+
+  .logout-modal-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .logout-modal-cancel,
+  .logout-modal-confirm {
+    padding: 14px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-container {
+    padding: 15px;
+  }
+
+  .dashboard-logout-button {
+    top: 10px;
+    right: 10px;
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+
+  .dashboard-photo-button {
+    width: 120px;
+    height: 120px;
+    border-radius: 14px;
+    margin: 20px 0;
+  }
+
+  .dashboard-photo-icon {
+    font-size: 72px;
+  }
+
+  .dashboard-photo-text {
+    font-size: 14px;
+  }
+
+  .logout-modal-overlay {
+    padding: 10px;
+  }
+
+  .logout-modal-header,
+  .logout-modal-body,
+  .logout-modal-actions {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
 }

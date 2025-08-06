@@ -25,6 +25,10 @@ export default function ImageList({ formattedDate }: Props) {
   const [downloading, setDownloading] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
+  // 이미지 미리보기 모달 상태
+  const [previewImage, setPreviewImage] = useState<ImageItem | null>(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
   // 이미지 목록 가져오기
   useEffect(() => {
     const getImageList = async () => {
@@ -92,6 +96,63 @@ export default function ImageList({ formattedDate }: Props) {
       });
     };
   }, [images.length]);
+
+  // 키보드 이벤트 처리
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!previewImage) return;
+
+      switch (e.key) {
+        case "Escape":
+          setPreviewImage(null);
+          break;
+        case "ArrowLeft":
+          handlePrevImage();
+          break;
+        case "ArrowRight":
+          handleNextImage();
+          break;
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [previewImage, currentImageIndex]);
+
+  // 이미지 미리보기 열기
+  const handleImagePreview = (image: ImageItem) => {
+    if (image.loading || image.error) return;
+
+    const imageIndex = images.findIndex((img) => img.id === image.id);
+    setCurrentImageIndex(imageIndex);
+    setPreviewImage(image);
+  };
+
+  // 이전 이미지로 이동
+  const handlePrevImage = () => {
+    const availableImages = images.filter((img) => !img.loading && !img.error);
+    if (availableImages.length === 0) return;
+
+    const currentAvailableIndex = availableImages.findIndex((img) => img.id === previewImage?.id);
+    const prevIndex = currentAvailableIndex > 0 ? currentAvailableIndex - 1 : availableImages.length - 1;
+    const prevImage = availableImages[prevIndex];
+
+    setPreviewImage(prevImage);
+    setCurrentImageIndex(images.findIndex((img) => img.id === prevImage.id));
+  };
+
+  // 다음 이미지로 이동
+  const handleNextImage = () => {
+    const availableImages = images.filter((img) => !img.loading && !img.error);
+    if (availableImages.length === 0) return;
+
+    const currentAvailableIndex = availableImages.findIndex((img) => img.id === previewImage?.id);
+    const nextIndex = currentAvailableIndex < availableImages.length - 1 ? currentAvailableIndex + 1 : 0;
+    const nextImage = availableImages[nextIndex];
+
+    setPreviewImage(nextImage);
+    setCurrentImageIndex(images.findIndex((img) => img.id === nextImage.id));
+  };
 
   // 개별 이미지 선택/해제
   const handleImageSelect = (imageId: string) => {
@@ -187,6 +248,10 @@ export default function ImageList({ formattedDate }: Props) {
         newSelected.delete(image.id);
         return newSelected;
       });
+      // 미리보기 중인 이미지가 삭제된 경우 모달 닫기
+      if (previewImage?.id === image.id) {
+        setPreviewImage(null);
+      }
       showSuccessToast("이미지가 삭제되었습니다.");
     } catch (error) {
       console.error("이미지 삭제 실패:", error);
@@ -203,7 +268,6 @@ export default function ImageList({ formattedDate }: Props) {
 
     const selectedImageItems = images.filter((img) => selectedImages.has(img.id));
     const imageNames = selectedImageItems.map((img) => img.name);
-
     const confirmed = await showMultiDeleteConfirm(selectedImages.size, imageNames);
     if (!confirmed) return;
 
@@ -214,6 +278,10 @@ export default function ImageList({ formattedDate }: Props) {
       });
       // 성공 시 이미지 목록에서 제거
       setImages((prevImages) => prevImages.filter((img) => !selectedImages.has(img.id)));
+      // 미리보기 중인 이미지가 삭제된 경우 모달 닫기
+      if (previewImage && selectedImages.has(previewImage.id)) {
+        setPreviewImage(null);
+      }
       // 선택 초기화
       setSelectedImages(new Set());
       setIsAllSelected(false);
@@ -280,7 +348,13 @@ export default function ImageList({ formattedDate }: Props) {
                     <span>이미지 로드 실패</span>
                   </div>
                 ) : (
-                  <img src={image.blobUrl || "/placeholder.svg"} alt={image.name} loading="lazy" />
+                  <img
+                    src={image.blobUrl || "/placeholder.svg"}
+                    alt={image.name}
+                    loading="lazy"
+                    onClick={() => handleImagePreview(image)}
+                    style={{ cursor: "pointer" }}
+                  />
                 )}
                 <div className="image-overlay">
                   <input
@@ -289,6 +363,7 @@ export default function ImageList({ formattedDate }: Props) {
                     checked={selectedImages.has(image.id)}
                     onChange={() => handleImageSelect(image.id)}
                     disabled={image.loading || image.error || deleting}
+                    onClick={(e) => e.stopPropagation()}
                   />
                 </div>
                 {!image.loading && !image.error && (
@@ -321,6 +396,54 @@ export default function ImageList({ formattedDate }: Props) {
               <div className="image-name">{image.name}</div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* 이미지 미리보기 모달 */}
+      {previewImage && (
+        <div className="image-preview-modal" onClick={() => setPreviewImage(null)}>
+          <div className="image-preview-content" onClick={(e) => e.stopPropagation()}>
+            <div className="image-preview-header">
+              <button className="image-preview-close" onClick={() => setPreviewImage(null)}>
+                ✕
+              </button>
+            </div>
+
+            <div className="image-preview-body">
+              <button
+                className="image-preview-nav image-preview-prev"
+                onClick={handlePrevImage}
+                disabled={images.filter((img) => !img.loading && !img.error).length <= 1}
+              >
+                ◀
+              </button>
+
+              <div className="image-preview-wrapper">
+                <img
+                  src={previewImage.blobUrl || "/placeholder.svg"}
+                  alt={previewImage.name}
+                  className="image-preview-img"
+                />
+              </div>
+
+              <button
+                className="image-preview-nav image-preview-next"
+                onClick={handleNextImage}
+                disabled={images.filter((img) => !img.loading && !img.error).length <= 1}
+              >
+                ▶
+              </button>
+            </div>
+
+            <div className="image-preview-actions">
+              <button className="image-preview-download" onClick={() => downloadImage(previewImage)}>
+                다운로드
+              </button>
+              <button className="image-preview-delete" onClick={() => deleteImage(previewImage)}>
+                삭제
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

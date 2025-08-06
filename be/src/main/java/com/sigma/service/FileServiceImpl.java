@@ -36,7 +36,7 @@ public class FileServiceImpl implements FileService {
     
     @Transactional
     @Override
-    public void saveImage(Long userId, MultipartFile image, LocalDate date) {
+    public void saveImage(Long userId, List<MultipartFile> images, LocalDate date) {
 
         String year = String.valueOf(date.getYear());
         String month = String.format("%02d", date.getMonthValue());
@@ -51,30 +51,34 @@ public class FileServiceImpl implements FileService {
             folder.mkdirs(); // 중간 폴더까지 전부 생성
         }
 
-        // UUID + 확장자 유지
-        String originalFilename = image.getOriginalFilename();
-        String ext = "";
+		for (MultipartFile image : images) {
+			if (image.isEmpty())
+				continue; // 빈 파일 처리
 
-        if (originalFilename != null && originalFilename.contains(".")) {
-            ext = originalFilename.substring(originalFilename.lastIndexOf("."));
-        }
+			String originalFilename = image.getOriginalFilename();
+			String ext = "";
 
-        String uuidName = UUID.randomUUID().toString() + ext;
-        String fullPath = folderPath + "/" + uuidName;
+			if (originalFilename != null && originalFilename.contains(".")) {
+				ext = originalFilename.substring(originalFilename.lastIndexOf("."));
+			}
 
-        try {
-            image.transferTo(new File(fullPath));
-        } catch (IOException e) {
-            throw new CustomException(ErrorCode.FILE_UPLOAD_FAIL);
-        }
+			String uuidName = UUID.randomUUID().toString() + ext;
+			String fullPath = folderPath + "/" + uuidName;
 
-        imageRepository.save(Image.builder()
-            .user(userRepository.getReferenceById(userId))
-            .filename(uuidName) // DB엔 파일명만 저장
-            .folderPath(String.format("%s/%s/%s", year, month, day)) // 경로만 저장 (옵션)
-            .createdAt(date)
-            .build());
-    }
+			try {
+				image.transferTo(new File(fullPath));
+			} catch (IOException e) {
+				throw new CustomException(ErrorCode.FILE_UPLOAD_FAIL);
+			}
+
+			imageRepository.save(Image.builder()
+				.user(userRepository.getReferenceById(userId))
+				.filename(uuidName)
+				.folderPath(String.format("%s/%s/%s", year, month, day))
+				.createdAt(date)
+				.build());
+		}
+	}
 
     @Override
     public List<String> getImagePathsByDate(Long userId, LocalDate date) {
