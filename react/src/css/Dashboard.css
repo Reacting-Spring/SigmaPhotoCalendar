@@ -38,3 +38,112 @@
 .month-button:hover {
   background-color: #f0f0f0;
 }
+
+/* 새로 추가된 액션 버튼들 */
+.dashboard-action-buttons {
+  display: flex;
+  gap: 20px;
+  margin: 20px 0;
+  width: 100%;
+  max-width: 400px;
+  justify-content: center;
+}
+
+.dashboard-action-button {
+  flex: 1;
+  height: 50px;
+  max-width: 180px;
+}
+
+.dashboard-left-button {
+  background-color: #4b72fa;
+  color: white;
+}
+
+.dashboard-right-button {
+  background-color: #6c757d;
+  color: white;
+}
+
+/* 모달 스타일 */
+.dashboard-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.dashboard-modal-content {
+  background-color: white;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+}
+
+.dashboard-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 20px 0 20px;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 10px;
+}
+
+.dashboard-modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+}
+
+.dashboard-modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 5px;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.dashboard-modal-close:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .dashboard-action-buttons {
+    flex-direction: column;
+    gap: 15px;
+    max-width: 300px;
+  }
+
+  .dashboard-action-button {
+    max-width: none;
+  }
+
+  .dashboard-modal-overlay {
+    padding: 10px;
+  }
+
+  .dashboard-modal-content {
+    max-height: 95vh;
+  }
+}

@@ -60,3 +60,100 @@
   max-width: 300px;
   height: 50px;
 }
+
+/* 다중 이미지 컨테이너 */
+.image-picker-images-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 90%;
+}
+
+/* 선택된 이미지 개수 표시 */
+.image-picker-images-count {
+  font-size: 14px;
+  font-weight: 500;
+  color: #666;
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+/* 이미지 그리드 컨테이너 */
+.image-picker-images-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 12px;
+  max-height: 350px;
+  overflow-y: auto;
+  padding: 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background-color: #f9f9f9;
+}
+
+/* 개별 이미지 아이템 */
+.image-picker-image-item {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 2px solid #e0e0e0;
+  transition: border-color 0.2s ease;
+}
+
+.image-picker-image-item:hover {
+  border-color: #007bff;
+}
+
+/* 그리드 내 이미지 스타일 (기존 .image-picker-image 수정) */
+.image-picker-image-item .image-picker-image {
+  width: 100%;
+  height: 100%;
+  max-height: none; /* 기존 max-height 제거 */
+  object-fit: cover;
+  display: block;
+}
+
+/* 이미지 삭제 버튼 */
+.image-picker-remove-button {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  background-color: rgba(255, 0, 0, 0.8);
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+  z-index: 1;
+}
+
+.image-picker-remove-button:hover {
+  background-color: rgba(255, 0, 0, 1);
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .image-picker-images-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .image-picker-button-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .image-picker-select-button {
+    width: 100%;
+    max-width: none;
+  }
+}

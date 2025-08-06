@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface FileService {
 
-    void saveImage(Long userId, MultipartFile image, LocalDate date);
+    void saveImage(Long userId, List<MultipartFile> images, LocalDate date);
 
     List<String> getImagePathsByDate(Long userId, LocalDate date);
 

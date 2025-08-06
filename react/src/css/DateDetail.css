@@ -30,6 +30,6 @@
   cursor: pointer;
   position: fixed;
   bottom: 2rem;
-  right: 2rem;
+  left: 2rem;
   box-shadow: 0 4px 16px rgba(0, 123, 255, 0.61);
 }
