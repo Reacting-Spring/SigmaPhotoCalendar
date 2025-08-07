@@ -5,7 +5,7 @@ const NUM_COLUMNS = 7;
 const NUM_ROWS = 6;
 const ITEM_MARGIN = 2;
 
-function useScreenWidth(maxWidth: number = 300) {
+function useScreenWidth(maxWidth: number = 350) {
   const getWidth = () => Math.min(window.innerWidth, maxWidth);
   const [width, setWidth] = useState(getWidth());
 
@@ -101,7 +101,7 @@ export default function Calendar({ year, month, onDayPress }: CalendarProps) {
             className={dayClass}
             style={{
               width: ITEM_SIZE,
-              height: ITEM_SIZE,
+              height: ITEM_SIZE + 10,
               margin: ITEM_MARGIN,
             }}
           >

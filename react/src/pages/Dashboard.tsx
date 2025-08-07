@@ -138,9 +138,9 @@ export default function Dashboard() {
 
       {/* 큰 정사각형 사진 촬영 버튼 */}
       <button className="dashboard-photo-button" onClick={handlePhotoUpload}>
-        <div className="dashboard-photo-icon">📷</div>
-        <div className="dashboard-photo-text">당일 촬영</div>
+        <div className="dashboard-photo-icon"></div>
       </button>
+      <div className="dashboard-photo-text">당일 사진</div>
 
       {/* 로그아웃 확인 모달 */}
       {showLogoutModal && (
