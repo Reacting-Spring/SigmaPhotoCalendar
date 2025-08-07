@@ -1,14 +1,14 @@
-import { useNavigate } from "react-router-dom";
 import { useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Calendar from "@/components/Calendar";
-import { useCalendar } from "./CalendarContext";
+import { useCalendar } from "@/context/calendar-context";
 import axiosInstance from "@/api/AxiosInstance";
 import useAuthStore from "@/store/AuthStore";
 import { showErrorToast, showSuccessToast } from "@/components/Toast";
 import "@/css/Dashboard.css";
 
 export default function Dashboard() {
-  const { year, month, setYear, setMonth } = useCalendar();
+  const { year, month, goToPrevMonth, goToNextMonth } = useCalendar();
   const navigate = useNavigate();
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -23,24 +23,6 @@ export default function Dashboard() {
     return `${year}-${month}-${day}`;
   };
 
-  const handlePrevMonth = () => {
-    if (month === 1) {
-      setYear(year - 1);
-      setMonth(12);
-    } else {
-      setMonth(month - 1);
-    }
-  };
-
-  const handleNextMonth = () => {
-    if (month === 12) {
-      setYear(year + 1);
-      setMonth(1);
-    } else {
-      setMonth(month + 1);
-    }
-  };
-
   const handleDayPress = (dateTag: string) => {
     navigate(`/date/${dateTag}`);
   };
@@ -52,11 +34,9 @@ export default function Dashboard() {
   const handleSignOutConfirm = async () => {
     console.log("로그아웃 시도");
     setIsLoggingOut(true);
-
     try {
       await axiosInstance.post("/auth/logout");
       useAuthStore.getState().clearAccessToken();
-      window.dispatchEvent(new CustomEvent("auth-expired"));
       showSuccessToast("로그아웃되었습니다.");
     } catch (error: any) {
       showErrorToast("로그아웃 중 오류가 발생했습니다.");
@@ -71,7 +51,6 @@ export default function Dashboard() {
   };
 
   const handlePhotoUpload = () => {
-    // 바로 카메라 실행
     cameraInputRef.current?.click();
   };
 
@@ -80,15 +59,12 @@ export default function Dashboard() {
     if (!file) {
       return;
     }
-
     const formattedDate = getTodayFormatted();
     console.log(`${formattedDate}의 사진 업로드`);
-
     try {
       const formData = new FormData();
       formData.append("images", file);
       formData.append("date", formattedDate);
-
       await axiosInstance.post("/files/upload", formData);
       showSuccessToast("오늘의 사진이 성공적으로 업로드되었습니다.");
     } catch (error: any) {
@@ -98,8 +74,6 @@ export default function Dashboard() {
         showErrorToast("이미지 업로드에 실패했습니다. 다시 시도해주세요.");
       }
     }
-
-    // input 값 초기화
     if (cameraInputRef.current) {
       cameraInputRef.current.value = "";
     }
@@ -116,32 +90,27 @@ export default function Dashboard() {
         onChange={handleCameraCapture}
         className="dashboard-hidden-input"
       />
-
       {/* 오른쪽 위 로그아웃 버튼 */}
       <button className="dashboard-logout-button" onClick={handleSignOutClick}>
         로그아웃
       </button>
-
       <div className="dashboard-header">
-        <button onClick={handlePrevMonth} className="month-button">
+        <button onClick={goToPrevMonth} className="month-button">
           ◀
         </button>
         <h1 className="dashboard-title">
           {year}년 {month}월
         </h1>
-        <button onClick={handleNextMonth} className="month-button">
+        <button onClick={goToNextMonth} className="month-button">
           ▶
         </button>
       </div>
-
-      <Calendar year={year} month={month - 1} onDayPress={handleDayPress} />
-
+      <Calendar year={year} month={month - 1} onDayPress={handleDayPress} /> {/* Calendar는 0-indexed month를 기대 */}
       {/* 큰 정사각형 사진 촬영 버튼 */}
       <button className="dashboard-photo-button" onClick={handlePhotoUpload}>
-        <div className="dashboard-photo-icon"></div>
+        <div className="dashboard-photo-icon"></div> {/* 아이콘 제거, 원래대로 빈 div */}
       </button>
       <div className="dashboard-photo-text">당일 사진</div>
-
       {/* 로그아웃 확인 모달 */}
       {showLogoutModal && (
         <div className="logout-modal-overlay" onClick={handleSignOutCancel}>
@@ -149,11 +118,9 @@ export default function Dashboard() {
             <div className="logout-modal-header">
               <h3>로그아웃 확인</h3>
             </div>
-
             <div className="logout-modal-body">
               <p>정말로 로그아웃하시겠습니까?</p>
             </div>
-
             <div className="logout-modal-actions">
               <button className="logout-modal-confirm" onClick={handleSignOutCancel} disabled={isLoggingOut}>
                 취소

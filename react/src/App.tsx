@@ -7,15 +7,15 @@ import Dashboard from "./pages/Dashboard.tsx";
 import SignIn from "./pages/SignIn.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import DateDetailScreen from "./pages/date/[date].tsx";
-import { CalendarProvider } from "./pages/CalendarContext.tsx";
+import { CalendarProvider } from "@/context/calendar-context";
 import { ConfirmDialogManager } from "./components/ConfirmDialog.tsx";
 
 function App() {
   return (
     <ToastManager>
       <ConfirmDialogManager>
-        <CalendarProvider>
-          <BrowserRouter>
+        <BrowserRouter>
+          <CalendarProvider>
             <Routes>
               <Route
                 path="/"
@@ -35,10 +35,10 @@ function App() {
               />
               <Route path="/login" element={<SignIn />} />
             </Routes>
-          </BrowserRouter>
-          <PWABadge />
-          <PWAInstallPrompt />
-        </CalendarProvider>
+          </CalendarProvider>
+        </BrowserRouter>
+        <PWABadge />
+        <PWAInstallPrompt />
       </ConfirmDialogManager>
     </ToastManager>
   );
