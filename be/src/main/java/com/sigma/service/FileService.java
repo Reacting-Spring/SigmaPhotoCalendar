@@ -8,7 +8,7 @@ public interface FileService {
 
     void saveImage(Long userId, List<MultipartFile> images, LocalDate date);
 
-    List<String> getImagePathsByDate(Long userId, LocalDate date);
+    List<String> getImagePathsByDate(LocalDate date);
 
-	void deleteImages(Long userId, List<String> filenames);
+	void deleteImages(List<String> filenames);
 }

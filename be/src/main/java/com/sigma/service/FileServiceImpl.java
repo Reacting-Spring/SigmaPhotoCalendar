@@ -81,8 +81,8 @@ public class FileServiceImpl implements FileService {
 	}
 
     @Override
-    public List<String> getImagePathsByDate(Long userId, LocalDate date) {
-        List<Image> images = imageRepository.findAllByUserIdAndCreatedAt(userId, date);
+    public List<String> getImagePathsByDate(LocalDate date) {
+        List<Image> images = imageRepository.findAllByCreatedAt(date);
 
         return images.stream()
             .map(img -> "/" + img.getFolderPath() + "/" + img.getFilename())
@@ -91,11 +91,11 @@ public class FileServiceImpl implements FileService {
 
     @Override
     @Transactional
-    public void deleteImages(Long userId, List<String> filenames) {
+    public void deleteImages(List<String> filenames) {
         List<String> pathsToDelete = new ArrayList<>();
 
         for (String filename : filenames) {
-            Image image = imageRepository.findByUserIdAndFilename(userId, filename)
+            Image image = imageRepository.findByFilename(filename)
                 .orElseThrow(() -> new CustomException(ErrorCode.FILE_NOT_FOUND));
 
             // 삭제할 파일 경로 기억

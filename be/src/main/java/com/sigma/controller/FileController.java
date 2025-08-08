@@ -37,19 +37,18 @@ public class FileController {
 
     // 특정 날짜 이미지 목록 조회
     @GetMapping("/images")
-    public ResponseEntity<List<String>> getImagePathsByDate(@AuthenticationPrincipal Long userId,
+    public ResponseEntity<List<String>> getImagePathsByDate(
         @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        List<String> imagePaths = fileService.getImagePathsByDate(userId, date);
+        List<String> imagePaths = fileService.getImagePathsByDate(date);
         return ResponseEntity.ok(imagePaths);
     }
 
     // 이미지 삭제
     @DeleteMapping("/images")
     public ResponseEntity<Void> deleteImages(
-        @AuthenticationPrincipal Long userId,
         @RequestBody List<String> filenames
     ) {
-        fileService.deleteImages(userId, filenames);
+        fileService.deleteImages(filenames);
         return ResponseEntity.noContent().build();
     }
 

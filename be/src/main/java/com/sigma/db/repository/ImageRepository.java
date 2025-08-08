@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ImageRepository extends JpaRepository<Image, Long> {
 
-    List<Image> findAllByUserIdAndCreatedAt(Long userId, LocalDate date);
+    List<Image> findAllByCreatedAt(LocalDate date);
 
-	Optional<Image> findByUserIdAndFilename(Long userId, String filename);
+	Optional<Image> findByFilename(String filename);
 }

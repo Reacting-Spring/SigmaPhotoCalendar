@@ -29,9 +29,9 @@ public class AuthController {
     // 회원가입
     // @PostMapping("/register")
     // public ResponseEntity<?> register(@RequestBody @Valid RegisterRequest request) {
-    //
+	//
     //     userService.register(request);
-    //
+	//
     //     return ResponseEntity.status(HttpStatus.CREATED).build();
     // }
 
@@ -55,7 +55,7 @@ public class AuthController {
     // 토큰 재발급
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(
-        @CookieValue(name = "refresh_token") String refreshToken) {
+        @CookieValue(name = "refresh_token", required = false) String refreshToken) {
         String newAccessToken = userService.reissueAccessToken(refreshToken);
         return ResponseEntity.ok(new LoginRes(newAccessToken));
     }
